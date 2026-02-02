@@ -1,15 +1,12 @@
 import express from "express";
-import bodyParser from "body-parser";
-import verifyShopifyWebhook from "../middleware/verifyShopifyWebhook.js";
-import { ordersCreate } from "../controllers/webhook.controller.js";
 
 const router = express.Router();
 
-router.post(
-  "/orders-create",
-  bodyParser.raw({ type: "application/json" }),
-  verifyShopifyWebhook,
-  ordersCreate
-);
+router.post("/shopify/order-create", (req, res) => {
+  console.log("🔥🔥 SHOPIFY WEBHOOK HIT 🔥🔥");
+  console.log("BODY:", req.body);
+
+  res.status(200).json({ success: true });
+});
 
 export default router;

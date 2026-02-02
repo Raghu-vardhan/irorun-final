@@ -5,7 +5,7 @@ import cors from "cors";
 
 import authRoutes from "./routes/auth.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
-import webhookRoutes from "./routes/webhook.routes.js";
+import webhookRoutes from "./routes/webhook.routes.js"; // ✅ KEEP ONLY THIS
 
 const app = express();
 
