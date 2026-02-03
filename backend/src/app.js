@@ -6,11 +6,11 @@ import router from "./routes/auth.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import webhookRoutes from "./routes/webhook.routes.js";
-import orderRoutes from "./routes/Orderroutes.js";
+import orderRoutes from "./routes/order.routes.js";
 
 const app = express();
 
-app.use(cors());
+app.use(cors());  
 
 // ✅ Webhooks MUST come BEFORE express.json
 app.use(
