@@ -1,6 +1,7 @@
 import express from "express";
 import Order from "../models/Order.model.js";
-import Store from "../models/Store-model.js";
+import Store from "../models/Store.model.js";
+
 
 const router = express.Router();
 
@@ -32,16 +33,20 @@ router.post("/order-create", async (req, res) => {
     let storeCode = null;
 
     console.log("📦 Detected discountCode:", discountCode);
-console.log("🗄️ Looking in Store collection...");
-    
+console.log("🧠 Store model collection:", Store.collection.name);
+
+
     if (discountCode) {
       const store = await Store.findOne({
-        coupons: discountCode,
-        isActive: true,
-      });
+      coupons: { $in: [discountCode] },
+    });
+
+    
 
       if (store) {
+        console.log("🏪 Store lookup result:", store);
         storeCode = store.storeCode;
+        
       }
     }
 

@@ -3,19 +3,15 @@ import mongoose from "mongoose";
 const storeSchema = new mongoose.Schema(
   {
     storeCode: {
-      type: String, // "BNG", "HYD"
+      type: String,
       required: true,
-      unique: true,
       uppercase: true,
       trim: true,
     },
-    storeName: {
-      type: String,
-      required: true,
-    },
+    storeName: String,
     coupons: [
       {
-        type: String, // "BNG10", "BNG15"
+        type: String,
         uppercase: true,
         trim: true,
       },
@@ -25,7 +21,10 @@ const storeSchema = new mongoose.Schema(
       default: true,
     },
   },
-  { timestamps: true }
+  {
+    collection: "stores", // 🔥 FORCE EXACT COLLECTION
+    timestamps: true,
+  }
 );
 
 export default mongoose.model("Store", storeSchema);
