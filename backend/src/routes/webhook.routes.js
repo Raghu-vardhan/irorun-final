@@ -30,6 +30,9 @@ router.post("/order-create", async (req, res) => {
     // 3️⃣ Find store using mapping collection
     let storeCode = null;
 
+    console.log("📦 Detected discountCode:", discountCode);
+console.log("🗄️ Looking in Store collection...");
+    
     if (discountCode) {
       const store = await Store.findOne({
         coupons: discountCode,
