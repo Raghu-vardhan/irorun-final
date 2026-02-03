@@ -4,8 +4,11 @@ import Store from "../models/Store-model.js";
 
 const router = express.Router();
 
+// ✅ SHOPIFY ORDER CREATE WEBHOOK
 router.post("/order-create", async (req, res) => {
   try {
+    console.log("🔥 SHOPIFY WEBHOOK HIT");
+
     const order = req.body;
 
     const discountCode =
@@ -25,6 +28,7 @@ router.post("/order-create", async (req, res) => {
     }
 
     if (!storeCode) {
+      console.log("❌ Store not identified for coupon:", discountCode);
       return res.status(400).json({
         success: false,
         message: "Store not identified from coupon",
@@ -41,6 +45,8 @@ router.post("/order-create", async (req, res) => {
       source: "shopify",
     });
 
+    console.log("✅ Shopify order saved:", savedOrder.shopifyOrderId);
+
     return res.status(201).json({
       success: true,
       message: "Shopify order saved",
@@ -50,7 +56,7 @@ router.post("/order-create", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Webhook error:", error);
+    console.error("❌ Webhook error:", error);
     return res.status(500).json({
       success: false,
       message: "Webhook failed",
