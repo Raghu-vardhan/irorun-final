@@ -9,7 +9,8 @@ router.post("/order-create", async (req, res) => {
     console.log("🔥 SHOPIFY WEBHOOK HIT");
 
     // 1️⃣ Get Shopify order payload
-    const order = req.body;
+  const order = JSON.parse(req.body.toString("utf8"));
+
 
     // 2️⃣ 🔑 FINAL DISCOUNT DETECTION LOGIC (ADD HERE)
     let discountCode = null;
