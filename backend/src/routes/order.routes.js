@@ -4,16 +4,25 @@ import authMiddleware from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-// CREATE ORDER
+// ✅ CREATE ORDER (FINAL)
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const order = await Order.create(req.body);
+    const order = await Order.create({
+      shopifyOrderId: req.body.shopifyOrderId,
+      customerName: req.body.customerName,
+      discountCode: req.body.discountCode,
+      discountAmount: req.body.discountAmount,
+      totalPrice: req.body.totalPrice,
+
+      // 🔐 IMPORTANT: storeCode ALWAYS from JWT
+      storeCode: req.user.storeCode,
+    });
 
     return res.status(201).json({
       success: true,
       message: "Order created successfully",
       data: {
-        id: order._id,
+        _id: order._id,
         shopifyOrderId: order.shopifyOrderId,
         customerName: order.customerName,
         discountCode: order.discountCode,
