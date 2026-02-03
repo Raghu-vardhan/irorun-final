@@ -23,7 +23,7 @@ const AppRoutes = () => {
         path="/coupons"
         element={
           <ProtectedRoute>
-            <Coupons />
+            <Dashboard />
           </ProtectedRoute>
         }
       />
@@ -32,7 +32,7 @@ const AppRoutes = () => {
         path="/orders"
         element={
           <ProtectedRoute>
-            <Orders />
+           <Dashboard />
           </ProtectedRoute>
         }
       />

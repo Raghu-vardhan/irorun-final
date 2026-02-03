@@ -5,21 +5,24 @@ import cors from "cors";
 
 import authRoutes from "./routes/auth.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
-import webhookRoutes from "./routes/webhook.routes.js"; // ✅ KEEP ONLY THIS
+import webhookRoutes from "./routes/webhook.routes.js";
 
 const app = express();
 
 app.use(cors());
+
+// ✅ Webhooks MUST come BEFORE express.json
+app.use(
+  "/api/webhooks",
+  express.raw({ type: "application/json" }),
+  webhookRoutes
+);
+
+// ❗ JSON middleware AFTER webhooks
 app.use(express.json());
 
-console.log("✅ Registering /api/auth");
 app.use("/api/auth", authRoutes);
-
-console.log("✅ Registering /api/dashboard");
 app.use("/api/dashboard", dashboardRoutes);
-
-console.log("✅ Registering /api/webhooks");
-app.use("/api/webhooks", webhookRoutes);
 
 // 404 — MUST BE LAST
 app.use((req, res) => {
