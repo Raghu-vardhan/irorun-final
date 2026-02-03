@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:10000",
+  baseURL: "https://irorun-final-1.onrender.com/",
 });
 
 API.interceptors.request.use((req) => {

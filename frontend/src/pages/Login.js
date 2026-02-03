@@ -169,7 +169,7 @@ const Login = () => {
             padding: '5px 10px'
           }}
         >
-          Debug Token
+
         </button>
       </div>
     </div>
