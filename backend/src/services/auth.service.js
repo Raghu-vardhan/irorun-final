@@ -14,7 +14,7 @@ const comparePassword = async (password, hashedPassword) => {
 
 const generateToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: "7d"
+    expiresIn: "7d",
   });
 };
 
@@ -22,29 +22,41 @@ const generateToken = (payload) => {
 
 // REGISTER USER
 export const registerUser = async ({ email, password, storeCode }) => {
+  if (!email || !password || !storeCode) {
+    throw new Error("Email, password and storeCode are required");
+  }
+
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw new Error("User already exists");
   }
+
+  // ✅ Normalize storeCode (CRITICAL FIX)
+  const normalizedStoreCode = storeCode.toUpperCase().trim();
 
   const hashedPassword = await hashPassword(password);
 
   const user = await User.create({
     email,
     password: hashedPassword,
-    storeCode
+    storeCode: normalizedStoreCode,
   });
 
   return {
     id: user._id,
     email: user.email,
-    storeCode: user.storeCode
+    storeCode: user.storeCode,
   };
 };
 
 // LOGIN USER
 export const loginUser = async ({ email, password }) => {
-  const user = await User.findOne({ email });
+  if (!email || !password) {
+    throw new Error("Email and password are required");
+  }
+
+ const normalizedEmail = email.toLowerCase().trim();
+const user = await User.findOne({ email: normalizedEmail });
   if (!user) {
     throw new Error("Invalid credentials");
   }
@@ -54,12 +66,22 @@ export const loginUser = async ({ email, password }) => {
     throw new Error("Invalid credentials");
   }
 
+  // ✅ Normalize storeCode again (IMPORTANT FOR OLD USERS)
+  const normalizedStoreCode = user.storeCode.toUpperCase().trim();
+
   const token = generateToken({
     id: user._id,
     email: user.email,
-    role: user.role,
-    storeCode: user.storeCode
+    role: user.role || "store",
+    storeCode: normalizedStoreCode,
   });
 
-  return token;
+  return {
+    token,
+    user: {
+      id: user._id,
+      email: user.email,
+      storeCode: normalizedStoreCode,
+    },
+  };
 };

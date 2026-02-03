@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: "https://irorun-final-1.onrender.com/api"
+  baseURL: "http://localhost:10000",
 });
 
 API.interceptors.request.use((req) => {
@@ -12,6 +12,8 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-export const fetchDashboardData = () => {
-  return API.get("/dashboard"); // ✅ EXACT
-};
+export const fetchDashboardData = () => API.get("api/dashboard");
+export const loginUser = (data) => API.post("api/auth/login", data);
+
+export default API;
+

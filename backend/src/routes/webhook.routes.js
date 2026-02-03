@@ -1,6 +1,6 @@
 import express from "express";
 import Order from "../models/Order.model.js";
-import Store from "../models/Store.model.js";
+import Store from "../models/store.model.js";
 
 
 const router = express.Router();
@@ -41,7 +41,6 @@ console.log("🧠 Store model collection:", Store.collection.name);
       coupons: { $in: [discountCode] },
     });
 
-    
 
       if (store) {
         console.log("🏪 Store lookup result:", store);
