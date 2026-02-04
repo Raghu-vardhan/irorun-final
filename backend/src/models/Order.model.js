@@ -40,7 +40,10 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: "INR"
     },
-
+     storeCode: {
+      type: String,
+      index: true
+    },
     // Shopify timestamps
     orderCreatedAt: {
       type: Date

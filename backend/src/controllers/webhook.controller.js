@@ -1,13 +1,15 @@
 import Order from "../models/Order.model.js";
+import { getStoreCodeFromDiscount } from "../utils/storeCode.js";
 
 // ✅ NAMED EXPORT
 export const ordersCreate = async (req, res) => {
   try {
+    // If you are using express.raw for webhooks
     const payload = JSON.parse(req.body.toString());
 
     const shopifyOrderId = payload.id.toString();
 
-    // Prevent duplicate webhook inserts
+    // ✅ Prevent duplicate webhook inserts
     const exists = await Order.findOne({ shopifyOrderId });
     if (exists) {
       return res.status(200).send("Duplicate order ignored");
@@ -19,10 +21,12 @@ export const ordersCreate = async (req, res) => {
 
     const discountCode = payload.discount_codes?.[0]?.code || null;
     const discountAmount = Number(payload.discount_codes?.[0]?.amount || 0);
-    const totalPrice = Number(payload.total_price);
+    const totalPrice = Number(payload.total_price || 0);
 
-    // Example: HYD15 → HYD
-    const storeCode = discountCode ? discountCode.slice(0, 3) : null;
+    // ✅ Use helper to detect store code safely
+    const storeCode = getStoreCodeFromDiscount(discountCode);
+
+    console.log("🧪 Discount:", discountCode, "=> Store:", storeCode);
 
     await Order.create({
       shopifyOrderId,
@@ -39,3 +43,7 @@ export const ordersCreate = async (req, res) => {
     res.status(500).send("Webhook failed");
   }
 };
+
+console.log(getStoreCodeFromDiscount("HYD15"));      // HYD
+console.log(getStoreCodeFromDiscount("blr_offer")); // BLR
+console.log(getStoreCodeFromDiscount("XYZ10"));     // null

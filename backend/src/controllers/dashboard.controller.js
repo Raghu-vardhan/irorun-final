@@ -33,5 +33,6 @@ export const dashboardData = async (req, res) => {
 
   } catch (err) {
     res.status(500).json({ message: "Dashboard error" });
+    console.log("Coupon Revenue:", couponRevenue);
   }
 };
