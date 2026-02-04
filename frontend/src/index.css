@@ -160,10 +160,18 @@ tbody tr:hover {
    LOGIN PAGE
 ========================= */
 .login-container {
-  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 100vh;
+
+  background-image:
+    linear-gradient(135deg, rgba(247, 246, 243, 0.7), rgba(236, 234, 229, 0.7)),
+    url("https://irorun.in/cdn/shop/files/WhatsApp_Image_2025-09-08_at_14.24.02.jpg?v=1758514695&width=2000");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .login-box {
@@ -230,6 +238,11 @@ tbody tr:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-image: linear-gradient(135deg, rgba(247, 246, 243, 0.7), rgba(236, 234, 229, 0.7)), url(https://irorun.in/cdn/shop/files/WhatsApp_Image_2025-09-08_at_14.24.02.jpg?v=1758514695&width=2000);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 20px;
 }
 
 .login-box {

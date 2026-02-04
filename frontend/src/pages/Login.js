@@ -143,34 +143,6 @@ const Login = () => {
         </button>
         
         {/* Temporary debug button */}
-        <button 
-          onClick={() => {
-            const token = localStorage.getItem('token');
-            console.log("🔍 Current token in localStorage:", token);
-            console.log("Type:", typeof token);
-            if (token) {
-              console.log("First 100 chars:", token.substring(0, 100));
-              if (token.includes('.')) {
-                const parts = token.split('.');
-                console.log("JWT parts:", parts.length);
-                try {
-                  const payload = JSON.parse(atob(parts[1]));
-                  console.log("JWT payload:", payload);
-                } catch(e) {
-                  console.log("Could not decode payload");
-                }
-              }
-            }
-          }}
-          style={{
-            marginTop: '10px',
-            background: '#666',
-            fontSize: '12px',
-            padding: '5px 10px'
-          }}
-        >
-
-        </button>
       </div>
     </div>
   );
