@@ -1,10 +1,10 @@
 import express from "express";
-import { register, login } from "../controllers/auth.controller.js";
+import { adminLogin, registerStoreOwner, login } from "../controllers/auth.controller.js";
 
 const router = express.Router();
 
-// ❌ NO protect middleware here
-router.post("/register", register);
+router.post("/admin/login", adminLogin);
+router.post("/register-store-owner", registerStoreOwner);
 router.post("/login", login);
 
 export default router;

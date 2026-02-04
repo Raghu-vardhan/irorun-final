@@ -1,38 +1,27 @@
 import Order from "../models/Order.model.js";
 
 export const dashboardData = async (req, res) => {
-  console.log("🔍 Backend fetch using storeCode:", req.user.storeCode);
-
   try {
-    const storeCode = req.user.storeCode.toUpperCase().trim();
+    let filter = {};
 
-    const orders = await Order.find({ storeCode }).sort({ createdAt: -1 });
+    // Store owner → only their store
+    if (req.user.role === "store_owner") {
+      filter.storeCode = req.user.storeCode;
+    }
+    // Admin → no filter = all stores
+
+    const orders = await Order.find(filter).sort({ createdAt: -1 });
 
     const totalOrders = orders.length;
+    const totalRevenue = orders.reduce((s, o) => s + (o.totalPrice || 0), 0);
+    const couponRevenue = orders.reduce((s, o) => s + (o.discountAmount || 0), 0);
 
-    const totalRevenue = orders.reduce(
-      (sum, o) => sum + (o.totalPrice || 0),
-      0
-    );
-
-    // ✅ Coupon Revenue
-    const couponRevenue = orders.reduce(
-      (sum, o) => sum + (o.discountAmount || 0),
-      0
-    );
-
-    // ✅ SEND IT TO FRONTEND
     res.json({
-      stats: {
-        totalOrders,
-        totalRevenue,
-        couponRevenue
-      },
+      stats: { totalOrders, totalRevenue, couponRevenue },
       orders
     });
-
   } catch (err) {
+    console.error("Dashboard error:", err);
     res.status(500).json({ message: "Dashboard error" });
-    console.log("Coupon Revenue:", couponRevenue);
   }
 };

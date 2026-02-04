@@ -1,53 +1,29 @@
 import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
 
-const protect = (req, res, next) => {
-  console.log("🚨 PROTECT MIDDLEWARE HIT");
-  console.log("URL:", req.originalUrl);
-  console.log("AUTH HEADER:", req.headers.authorization);
-
-  const authHeader = req.headers.authorization || "";
-
-  if (!authHeader) {
-    return res.status(401).json({ message: "Not authorized, no token" });
-  }
-
-  let token = "";
-
-  if (typeof authHeader === "string" && authHeader.startsWith("Bearer ")) {
-    token = authHeader.slice(7).trim();
-  } else if (typeof authHeader === "string") {
-    token = authHeader.trim();
-  }
-
-  console.log("Raw token extracted:", token, "type:", typeof token);
-
-  if (token === "[object Object]") {
-    token = req.headers["x-access-token"] || req.headers["authorization-token"] || (req.cookies && req.cookies.token) || null;
-    console.log("Recovered token from alt header/cookie:", token);
-  }
-
-  if (token && typeof token === "string" && (token.startsWith("{") || token.startsWith("["))) {
-    try {
-      const parsed = JSON.parse(token);
-      token = parsed.token || parsed.accessToken || parsed.jwt || parsed;
-      console.log("Token parsed from JSON:", token);
-    } catch (e) {
-      console.log("Token string is not valid JSON");
-    }
-  }
-
-  if (!token || typeof token !== "string") {
-    return res.status(401).json({ message: "Not authorized, invalid token format" });
-  }
-
+export const protect = async (req, res, next) => {
   try {
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    const token = auth.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) return res.status(401).json({ message: "User not found" });
+
+    req.user = user;
     next();
-  } catch (error) {
-    console.error("JWT verify error:", error && error.message ? error.message : error);
+  } catch (err) {
     return res.status(401).json({ message: "Token invalid" });
   }
 };
 
-export default protect;
+export const adminOnly = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Admin only" });
+  }
+  next();
+};
