@@ -85,10 +85,10 @@ button {
    STATS CARDS
 ========================= */
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin: 20px 0;
+      display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin: 20px 0;
 }
 
 .card {
@@ -386,5 +386,10 @@ tbody tr:hover {
   .orders-table td {
     font-size: 12px;
     padding: 10px;
+  }
+  .card{
+    font-size: 18px;
+    text-align: center;
+    padding: 20px;
   }
 }
