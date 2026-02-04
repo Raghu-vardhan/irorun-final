@@ -7,14 +7,18 @@ import DateFilter from "../components/DateFilter";
 
 const Dashboard = () => {
   const [orders, setOrders] = useState([]);
-  const [stats, setStats] = useState({});
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    totalOrders: 0,
+    couponRevenue: 0
+  });
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
   useEffect(() => {
     fetchDashboardData().then(res => {
       setOrders(res.data.orders);
-      setStats(res.data.stats);
+      setStats(res.data.stats); // 👈 THIS must include couponRevenue
     });
   }, []);
 

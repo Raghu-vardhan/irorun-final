@@ -1,4 +1,6 @@
 const StatsCards = ({ stats }) => {
+  
+  
   return (
     
    <div className="page-width">
@@ -7,7 +9,7 @@ const StatsCards = ({ stats }) => {
     </div>
      <div className="stats-grid ">
       <h1 className="card"><b>Revenue</b> ₹{stats.totalRevenue}</h1>
-      <h1 className="card"><b>Coupens Revenue ₹</b>{stats.totalCouponAmount}</h1>
+      <h1 className="card"><b>Coupens Revenue</b> ₹{stats.couponRevenue}</h1>
       <h1 className="card"><b>Orders : </b>{stats.totalOrders}</h1>
     </div>
    </div>
