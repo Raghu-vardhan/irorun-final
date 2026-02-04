@@ -117,7 +117,7 @@ const Login = () => {
       <div className="login-box">
         <img src="https://irorun.in/cdn/shop/files/338375715_2274413929407990_2262713576497268016_n.jpg?v=1769742573&width=280" alt="Irorun" className="login-logo" />
 
-        <h2>Admin Login</h2>
+        <h2>Store Login</h2>
         <p className="login-subtitle">
           Sign in to manage orders & revenue
         </p>
