@@ -23,7 +23,7 @@ const CreateStore = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:10000/api/auth/register-store-owner", {
+      const res = await fetch("https://irorun-management.netlify.app/api/auth/register-store-owner", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
