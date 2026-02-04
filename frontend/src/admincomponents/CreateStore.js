@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API from "../api";
 
 const CreateStore = () => {
   const [email, setEmail] = useState("");
@@ -6,9 +7,8 @@ const CreateStore = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [storeCode, setStoreCode] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(""); // for toast
+  const [success, setSuccess] = useState("");
 
   const token = localStorage.getItem("token");
 
@@ -23,40 +23,31 @@ const CreateStore = () => {
     }
 
     try {
-      const res = await fetch("https://irorun-management.netlify.app/api/auth/register-store-owner", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ email, password, storeCode }),
-      });
+      const res = await API.post(
+        "/api/auth/register-store-owner",
+        { email, password, storeCode },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      const data = await res.json();
+      setSuccess(res.data.message || "Store created successfully!");
 
-      if (!res.ok) {
-        // 🔴 Show backend error
-        setError(data.message || "Failed to create store");
-        return;
-      }
-
-      // ✅ Success toast
-      setSuccess(data.message || "Store created successfully!");
-
-      // 🔄 Tell UsersList to refresh
+      // refresh users list
       window.dispatchEvent(new Event("users:refresh"));
 
-      // Clear form
       setEmail("");
       setPassword("");
       setConfirmPassword("");
       setStoreCode("");
       setShowPassword(false);
 
-      // Auto-hide toast after 3s
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      setError("Network error. Please try again.");
+      console.error("Create store error:", err);
+      setError(err.response?.data?.message || "Network error. Please try again.");
     }
   };
 
@@ -66,10 +57,7 @@ const CreateStore = () => {
         <h2>Create Store Owner</h2>
         <p className="create-store-subtitle">Add a new store and login credentials</p>
 
-        {/* Error message */}
         {error && <div className="form-error">{error}</div>}
-
-        {/* Success toast */}
         {success && <div className="toast-success">{success}</div>}
 
         <input
@@ -98,10 +86,11 @@ const CreateStore = () => {
 
         <div style={{ textAlign: "left", marginBottom: "12px" }}>
           <label style={{ fontSize: "13px", cursor: "pointer" }}>
-            <input style={{width:"20px"}}
+            <input
               type="checkbox"
               checked={showPassword}
               onChange={() => setShowPassword(!showPassword)}
+              style={{ marginRight: "6px" }}
             />
             Show password
           </label>
