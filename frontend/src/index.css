@@ -422,3 +422,61 @@ tbody tr:hover {
     padding: 20px;
   }
 }
+/* Drawer styles */
+/* Drawer styles */
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 240px;
+  background: #fff;
+  border-right: 1px solid #eee;
+  padding: 16px;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+.drawer.open {
+  transform: translateX(0);
+}
+
+.drawer h3 {
+  margin-bottom: 20px;
+}
+
+.drawer button {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  margin: 8px 0;
+  text-align: left;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.drawer button.active {
+  background: #111;
+  color: #fff;
+}
+
+/* Overlay */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 999;
+}
+
+/* Desktop: keep sidebar visible */
+@media (min-width: 1024px) {
+  .drawer {
+    transform: translateX(0);
+  }
+}

@@ -16,7 +16,7 @@ const Login = () => {
       console.log("📤 Sending login request...");
       
       const res = await loginUser({ email, password });
-      
+      console.log("✅ Login response:", res.data);
       
       // ✅ EXTRACT THE ACTUAL JWT STRING
       let tokenString = "";
@@ -96,7 +96,19 @@ const Login = () => {
       // Clean the token (remove quotes if any)
       const cleanToken = tokenString.replace(/^['"]+|['"]+$/g, '');
       localStorage.setItem("token", cleanToken);
-      
+      localStorage.setItem("token", cleanToken);
+
+      // ✅ ALSO STORE USER OBJECT
+      if (res.data.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        console.log("✅ Stored user:", res.data.user);
+      } else {
+        console.warn("⚠️ No user object in response:", res.data);
+      }
+
+      // Redirect to dashboard (or home)
+      window.location.href = "/";
+
       // ✅ VERIFY STORAGE
       const stored = localStorage.getItem("token");
       console.log("✅ Stored token verified:", stored?.substring(0, 50) + "...");

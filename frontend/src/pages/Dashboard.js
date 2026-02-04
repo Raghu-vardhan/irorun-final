@@ -4,22 +4,29 @@ import Header from "../components/Header";
 import StatsCards from "../components/StatsCards";
 import OrdersTable from "../components/OrdersTable";
 import DateFilter from "../components/DateFilter";
+import Sidebar from "../admincomponents/Sidebar";
+import UsersList from "../admincomponents/UserList";
+import CreateStore from "../admincomponents/CreateStore";
 
 const Dashboard = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false); // ✅ drawer state
   const [orders, setOrders] = useState([]);
-
+  const user = JSON.parse(localStorage.getItem("user")); // ✅ user
+  const [activeTab, setActiveTab] = useState("orders"); // ✅ tab state
 
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [filterType, setFilterType] = useState("all");
 
   useEffect(() => {
-    fetchDashboardData().then(res => {
-      setOrders(res.data.orders);
+    fetchDashboardData().then((res) => {
+      setOrders(res.data.orders || []);
     });
   }, []);
 
-  const filteredOrders = orders.filter(o => {
+  if (!user) return <p>Please login</p>;
+
+  const filteredOrders = orders.filter((o) => {
     const d = new Date(o.createdAt);
     const now = new Date();
 
@@ -57,26 +64,53 @@ const Dashboard = () => {
     return true;
   });
 
-  // ✅ MOVE THIS OUTSIDE filter()
   const filteredStats = {
     totalOrders: filteredOrders.length,
     totalRevenue: filteredOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0),
-    couponRevenue: filteredOrders.reduce((sum, o) => sum + (o.discountAmount || 0), 0)
+    couponRevenue: filteredOrders.reduce((sum, o) => sum + (o.discountAmount || 0), 0),
   };
+console.log("drawerOpen:", drawerOpen);
 
   return (
-    <div className="dashboard-bg">
-      <Header />
-      <StatsCards stats={filteredStats} />
-      <DateFilter
-        fromDate={fromDate}
-        toDate={toDate}
-        setFromDate={setFromDate}
-        setToDate={setToDate}
-        filterType={filterType}
-        setFilterType={setFilterType}
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+      {/* Sidebar Drawer */}
+      
+      <Sidebar
+        user={user}
+        active={activeTab}
+        setActive={setActiveTab}
+        open={drawerOpen}
+        setOpen={setDrawerOpen}
       />
-      <OrdersTable orders={filteredOrders} />
+
+      {/* Main content */}
+      <div style={{ flex: 1 }} className="dashboard-bg">
+        <Header onMenuClick={() => setDrawerOpen(true)} />
+
+        <div style={{ padding: "20px" }}>
+          {/* ORDERS TAB (Admin + Store) */}
+          {activeTab === "orders" && (
+            <>
+              <StatsCards stats={filteredStats} />
+              <DateFilter
+                fromDate={fromDate}
+                toDate={toDate}
+                setFromDate={setFromDate}
+                setToDate={setToDate}
+                filterType={filterType}
+                setFilterType={setFilterType}
+              />
+              <OrdersTable orders={filteredOrders} />
+            </>
+          )}
+
+          {/* USERS TAB (Admin only) */}
+          {activeTab === "users" && user.role === "admin" && <UsersList />}
+
+          {/* CREATE STORE TAB (Admin only) */}
+          {activeTab === "create" && user.role === "admin" && <CreateStore />}
+        </div>
+      </div>
     </div>
   );
 };
