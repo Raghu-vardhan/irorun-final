@@ -3,9 +3,9 @@ const StatsCards = ({ stats }) => {
   
   return (
     
-   <div className="page-width">
+   <div className="state-page page-width">
     <div className="welcome">
-      <h1>WELCOME BACK </h1>
+      <h1>Admin Dashboard </h1>
     </div>
      <div className="stats-grid ">
       <h1 className="card"><b>Revenue</b> ₹ {stats.totalRevenue}</h1>

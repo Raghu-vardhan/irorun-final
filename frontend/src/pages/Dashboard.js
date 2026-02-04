@@ -31,7 +31,7 @@ const Dashboard = () => {
   });
 
   return (
-    <>
+    <div className="dashboard-bg">
       <Header />
       <StatsCards stats={stats} />
       <DateFilter
@@ -41,7 +41,7 @@ const Dashboard = () => {
         setToDate={setToDate}
       />
       <OrdersTable orders={filteredOrders} />
-    </>
+    </div>
   );
 };
 
