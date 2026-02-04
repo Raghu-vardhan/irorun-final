@@ -324,3 +324,67 @@ tbody tr:hover {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto; /* mobile horizontal scroll */
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px; /* forces horizontal scroll on small screens */
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.orders-table th {
+  background: #f7f7f7;
+  font-weight: 600;
+}
+
+.orders-table tr:hover {
+  background: #fafafa;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.pagination button {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination button.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+/* Mobile tweaks */
+@media (max-width: 600px) {
+  .orders-table th,
+  .orders-table td {
+    font-size: 12px;
+    padding: 10px;
+  }
+}
