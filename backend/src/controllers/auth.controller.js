@@ -99,3 +99,39 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Login failed" });
   }
 };
+
+
+export const registerAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ message: "Admin already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const admin = await User.create({
+      email,
+      password: hashedPassword,
+      role: "admin"
+    });
+
+    res.json({ message: "Admin created successfully", admin });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error creating admin" });
+  }
+};
+
+// fetch users
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    res.json({ total: users.length, users });
+  } catch (err) {
+    console.error("Get users error:", err);
+    res.status(500).json({ message: "Failed to fetch users" });
+  }
+};
