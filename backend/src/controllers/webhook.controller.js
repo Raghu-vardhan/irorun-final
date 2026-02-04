@@ -1,5 +1,5 @@
 import Order from "../models/Order.model.js";
-import { getStoreCodeFromDiscount } from "../utils/storeCode.js";
+import User from "../models/user.model.js"; // ✅ use users collection
 
 // ✅ NAMED EXPORT
 export const ordersCreate = async (req, res) => {
@@ -23,10 +23,35 @@ export const ordersCreate = async (req, res) => {
     const discountAmount = Number(payload.discount_codes?.[0]?.amount || 0);
     const totalPrice = Number(payload.total_price || 0);
 
-    // ✅ Use helper to detect store code safely
-    const storeCode = getStoreCodeFromDiscount(discountCode);
+    // ✅ NEW: detect store from USERS collection
+    let storeCode = null;
+    let storeOwner = null;
+
+    if (discountCode) {
+      // Extract letters only: FIT15 -> FIT, HYD20 -> HYD
+      const prefix = discountCode.replace(/[0-9]/g, "").toUpperCase();
+
+      console.log("🧠 Looking for user with storeCode:", prefix);
+
+      const user = await User.findOne({
+        role: "store_owner",
+        storeCode: prefix,
+      });
+
+      if (user) {
+        storeCode = user.storeCode;
+        storeOwner = user._id; // optional but recommended
+      }
+    }
 
     console.log("🧪 Discount:", discountCode, "=> Store:", storeCode);
+
+    if (!storeCode) {
+      return res.status(200).json({
+        success: true,
+        message: "Order received but store not identified",
+      });
+    }
 
     await Order.create({
       shopifyOrderId,
@@ -34,7 +59,8 @@ export const ordersCreate = async (req, res) => {
       discountCode,
       discountAmount,
       totalPrice,
-      storeCode
+      storeCode,
+      storeOwner, // ✅ link order to user
     });
 
     res.status(200).send("Webhook processed");
@@ -43,7 +69,3 @@ export const ordersCreate = async (req, res) => {
     res.status(500).send("Webhook failed");
   }
 };
-
-console.log(getStoreCodeFromDiscount("HYD15"));      // HYD
-console.log(getStoreCodeFromDiscount("blr_offer")); // BLR
-console.log(getStoreCodeFromDiscount("XYZ10"));     // null
