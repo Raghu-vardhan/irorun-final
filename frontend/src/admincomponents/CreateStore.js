@@ -27,21 +27,38 @@ const CreateStore = () => {
   };
 
   return (
-    <form onSubmit={submit}>
+  <div className="create-store-container">
+    <form className="create-store-box" onSubmit={submit}>
       <h2>Create Store Owner</h2>
+      <p className="create-store-subtitle">Add a new store and login credentials</p>
 
-      <input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <br /><br />
+      <input
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
 
-      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <br /><br />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
 
-      <input placeholder="Store Code" value={storeCode} onChange={(e) => setStoreCode(e.target.value)} />
-      <br /><br />
+      <input
+        placeholder="Store Code"
+        value={storeCode}
+        onChange={(e) => setStoreCode(e.target.value.toUpperCase())}
+        required
+      />
 
       <button type="submit">Create Store</button>
     </form>
-  );
+  </div>
+);
+
 };
 
 export default CreateStore;

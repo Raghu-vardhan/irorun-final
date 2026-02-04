@@ -80,7 +80,16 @@ button {
 .header button:hover {
   background: #dc2626;
 }
+.dashboard-main{
+  display: flex;
+  height: 100vh;
+}
 
+@media (max-width:720px){
+    .dashboard-main{
+      display: block;
+    }
+}
 /* =========================
    STATS CARDS
 ========================= */
@@ -429,7 +438,7 @@ tbody tr:hover {
   top: 0;
   left: 0;
   height: 100vh;
-  width: 240px;
+  width: 260px;
   background: #fff;
   border-right: 1px solid #eee;
   padding: 16px;
@@ -456,6 +465,8 @@ tbody tr:hover {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  padding: 20px;
+    font-size: 18px;
 }
 
 .drawer button.active {
@@ -474,9 +485,80 @@ tbody tr:hover {
   z-index: 999;
 }
 
-/* Desktop: keep sidebar visible */
-@media (min-width: 1024px) {
-  .drawer {
-    transform: translateX(0);
+
+/* =========================
+   CREATE STORE FORM
+========================= */
+.create-store-container {
+  min-height: calc(100vh - 80px); /* below header */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.create-store-box {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 36px 30px;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+
+.create-store-box h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.create-store-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 22px;
+}
+
+.create-store-box input {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  border: 1px solid #d6d6d6;
+  font-size: 14px;
+  transition: border 0.2s ease;
+}
+
+.create-store-box input:focus {
+  outline: none;
+  border-color: #111111;
+}
+
+.create-store-box button {
+  width: 100%;
+  padding: 14px;
+  background: #111111;
+  color: #ffffff;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 6px;
+  transition: all 0.2s ease;
+}
+
+.create-store-box button:hover {
+  background: #000000;
+  transform: translateY(-1px);
+}
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .create-store-box {
+    padding: 28px 22px;
+    border-radius: 14px;
+  }
+
+  .create-store-box h2 {
+    font-size: 20px;
   }
 }

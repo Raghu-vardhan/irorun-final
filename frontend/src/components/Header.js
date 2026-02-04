@@ -9,8 +9,8 @@ const Header = ({ onMenuClick }) => {
   return (
     <div className="header">
       {/* Left: Menu + Logo */}
-      <div className="header-left">
         <button className="menu-btn" onClick={onMenuClick}>☰</button>
+      <div className="header-left">
 
         <a href="/" className="brand">
           <img

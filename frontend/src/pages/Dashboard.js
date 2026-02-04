@@ -72,7 +72,7 @@ const Dashboard = () => {
 console.log("drawerOpen:", drawerOpen);
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div className="dashboard-main">
       {/* Sidebar Drawer */}
       
       <Sidebar
