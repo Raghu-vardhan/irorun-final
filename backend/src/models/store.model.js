@@ -7,23 +7,24 @@ const storeSchema = new mongoose.Schema(
       required: true,
       uppercase: true,
       trim: true,
+      unique: true
     },
     storeName: String,
     coupons: [
       {
         type: String,
         uppercase: true,
-        trim: true,
-      },
+        trim: true
+      }
     ],
     isActive: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   {
-    collection: "stores", // 🔥 FORCE EXACT COLLECTION
-    timestamps: true,
+    collection: "stores",
+    timestamps: true
   }
 );
 
