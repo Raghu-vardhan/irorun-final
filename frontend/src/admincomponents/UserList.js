@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import API from "../api"; // ✅ same API used by Orders
+import { useEffect, useState, useCallback } from "react";
+import API from "../api"; // use same API as Orders
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const token = localStorage.getItem("token");
 
-  useEffect(() => {
+  const fetchUsers = useCallback(() => {
     if (!token) return;
 
     API.get("/api/auth/admin/users", {
@@ -13,13 +13,19 @@ const UserList = () => {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => {
-        setUsers(res.data.users || []);
-      })
-      .catch((err) => {
-        console.error("❌ Users fetch error:", err);
-      });
+      .then((res) => setUsers(res.data.users || []))
+      .catch((err) => console.error("❌ Users fetch error:", err));
   }, [token]);
+
+  useEffect(() => {
+    fetchUsers();
+
+    // 🔄 Listen for refresh event
+    const handler = () => fetchUsers();
+    window.addEventListener("users:refresh", handler);
+
+    return () => window.removeEventListener("users:refresh", handler);
+  }, [fetchUsers]);
 
   return (
     <div>
