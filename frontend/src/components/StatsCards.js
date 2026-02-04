@@ -11,7 +11,7 @@ const StatsCards = ({ stats }) => {
 
       <div className="stats-grid">
         <div className="card">
-          <b>Revenue</b>
+          <b>Total Sales </b>
           <div>₹ {totalRevenue.toLocaleString()}</div>
         </div>
 
@@ -21,7 +21,7 @@ const StatsCards = ({ stats }) => {
         </div>
 
         <div className="card">
-          <b>Orders</b>
+          <b>Total Orders</b>
           <div>{totalOrders}</div>
         </div>
       </div>

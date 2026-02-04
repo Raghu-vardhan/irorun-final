@@ -1,4 +1,6 @@
-const STORE_CODES = ["HYD", "BLR", "CHE", "DEL", "MUM"];
+const STORE_CODES = users
+  .filter(u => u.storeCode)
+  .map(u => u.storeCode.toUpperCase()); ;
 
 export function getStoreCodeFromDiscount(discountCode) {
   if (!discountCode || typeof discountCode !== "string") {

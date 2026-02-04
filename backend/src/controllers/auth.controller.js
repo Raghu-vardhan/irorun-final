@@ -135,3 +135,18 @@ export const getAllUsers = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch users" });
   }
 };
+
+export const getStoreCodes = async (req, res) => {
+  try {
+    const stores = await User.find(
+      { role: "store_owner", storeCode: { $exists: true, $ne: "" } },
+      { storeCode: 1, _id: 0 }
+    );
+
+    const codes = [...new Set(stores.map(s => s.storeCode.toUpperCase()))];
+
+    res.json({ codes });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch store codes" });
+  }
+};
