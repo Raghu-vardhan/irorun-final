@@ -5,7 +5,7 @@ const StatsCards = ({ stats }) => {
     
    <div className="page-width">
     <div className="welcome">
-      <h1>WELCOME BACK TO IRORUN</h1>
+      <h1>WELCOME BACK </h1>
     </div>
      <div className="stats-grid ">
       <h1 className="card"><b>Revenue</b> ₹ {stats.totalRevenue}</h1>
