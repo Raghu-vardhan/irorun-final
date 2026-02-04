@@ -9,6 +9,7 @@ import UsersList from "../admincomponents/UserList";
 import CreateStore from "../admincomponents/CreateStore";
 
 const Dashboard = () => {
+  const [searchTerm, setSearchTerm] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false); // ✅ drawer state
   const [orders, setOrders] = useState([]);
   const user = JSON.parse(localStorage.getItem("user")); // ✅ user
@@ -99,6 +100,8 @@ console.log("drawerOpen:", drawerOpen);
                 setToDate={setToDate}
                 filterType={filterType}
                 setFilterType={setFilterType}
+                 searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
               />
               <OrdersTable orders={filteredOrders} />
             </>

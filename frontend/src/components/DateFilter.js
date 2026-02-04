@@ -1,18 +1,17 @@
 const DateFilter = ({
   filterType,
   setFilterType,
-  fromDate,
-  toDate,
-  setFromDate,
-  setToDate
+  searchTerm,
+  setSearchTerm
 }) => {
   return (
     <div className="page-width">
-      <div className="heading">
-        <h2>Order History</h2>
-      </div>
+    
 
-      <div className="filter" style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+      <div
+        className="filter"
+        style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}
+      >
         {/* Quick filter dropdown */}
         <select
           value={filterType}
@@ -24,23 +23,13 @@ const DateFilter = ({
           <option value="30">Last 30 Days</option>
         </select>
 
-        {/* Custom date range */}
+        {/* Search input */}
         <input
-          type="date"
-          value={fromDate}
-          onChange={e => {
-            setFilterType("custom");
-            setFromDate(e.target.value);
-          }}
-        />
-
-        <input
-          type="date"
-          value={toDate}
-          onChange={e => {
-            setFilterType("custom");
-            setToDate(e.target.value);
-          }}
+          type="text"
+          placeholder="Search..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ minWidth: "260px" }}
         />
       </div>
     </div>
