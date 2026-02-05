@@ -24,25 +24,25 @@ export const ordersCreate = async (req, res) => {
     const totalPrice = Number(payload.total_price || 0);
 
     // ✅ NEW: detect store from USERS collection
-    let storeCode = null;
-    let storeOwner = null;
+   let storeCode = payload.storeCode?.toUpperCase() || null;
+let storeOwner = null;
 
-    if (discountCode) {
-      // Extract letters only: FIT15 -> FIT, HYD20 -> HYD
-      const prefix = discountCode.replace(/[0-9]/g, "").toUpperCase();
+// If not provided in payload, try to detect from discount code
+if (!storeCode && discountCode) {
+  const prefix = discountCode.replace(/[0-9]/g, "").toUpperCase();
 
-      console.log("🧠 Looking for user with storeCode:", prefix);
+  console.log("🧠 Looking for user with storeCode:", prefix);
 
-      const user = await User.findOne({
-        role: "store_owner",
-        storeCode: prefix,
-      });
+  const user = await User.findOne({
+    role: "store_owner",
+    storeCode: prefix,
+  });
 
-      if (user) {
-        storeCode = user.storeCode;
-        storeOwner = user._id; // optional but recommended
-      }
-    }
+  if (user) {
+    storeCode = user.storeCode;
+    storeOwner = user._id;
+  }
+}
 
     console.log("🧪 Discount:", discountCode, "=> Store:", storeCode);
 
