@@ -2,61 +2,57 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    // Shopify identifiers
     shopifyOrderId: {
       type: String,
       required: true,
-      unique: true
-    },
-    orderNumber: {
-      type: Number
+      unique: true, // prevents duplicate orders
+      index: true,
     },
 
-    // Customer info
-    customerEmail: {
-      type: String,
-      lowercase: true
-    },
     customerName: {
-      type: String
+      type: String,
+      default: "",
+      trim: true,
     },
 
-    // Coupon info
     discountCode: {
       type: String,
-      index: true
+      default: null,
+      uppercase: true,
+      trim: true,
     },
+
     discountAmount: {
       type: Number,
-      default: 0
+      default: 0,
     },
 
-    // Order totals
     totalPrice: {
       type: Number,
-      required: true
-    },
-    currency: {
-      type: String,
-      default: "INR"
-    },
-     storeCode: {
-      type: String,
-      index: true
-    },
-    // Shopify timestamps
-    orderCreatedAt: {
-      type: Date
+      required: true,
     },
 
-    // Meta
+    storeCode: {
+      type: String,
+      required: true, // even if "UNASSIGNED"
+      uppercase: true,
+      trim: true,
+      index: true,
+    },
+
     source: {
       type: String,
-      default: "shopify"
-    }
+      default: "shopify",
+    },
+
+    orderCreatedAt: {
+      type: Date,
+      default: Date.now, // fallback if not provided
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true, // adds createdAt & updatedAt automatically
+  }
 );
 
-const Order = mongoose.model("Order", orderSchema);
-export default Order;
+export default mongoose.model("Order", orderSchema);

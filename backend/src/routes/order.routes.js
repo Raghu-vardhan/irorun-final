@@ -1,12 +1,12 @@
 import express from "express";
 import Order from "../models/Order.model.js";
-import Store from "../models/store.model.js";
+import User from "../models/user.model.js"; // ✅ use USER, not STORE
 
 const router = express.Router();
 
 router.post("/order-create", async (req, res) => {
   try {
-    console.log("🔥 SHOPIFY WEBHOOK HIT");
+    console.log("🔥 SHOPIFY WEBHOOK HIT (USER LOGIC)");
 
     // ✅ 1. Parse RAW Shopify payload
     if (!req.body || !Buffer.isBuffer(req.body)) {
@@ -33,26 +33,31 @@ router.post("/order-create", async (req, res) => {
 
     console.log("📦 Detected discountCode:", discountCode);
 
-    /* ---------------- STORE LOOKUP ---------------- */
+    /* ---------------- USER (STORE OWNER) LOOKUP ---------------- */
 
     let storeCode = null;
+    let storeOwner = null;
 
     if (discountCode) {
-      console.log("🧠 Store model collection:", Store.collection.name);
+      // Extract letters only: HYD15 -> HYD, FIT20 -> FIT
+      const prefix = discountCode.replace(/[0-9]/g, "").toUpperCase();
 
-      const store = await Store.findOne({
-        coupons: { $in: [discountCode] },
+      console.log("🧠 Looking for user with storeCode:", prefix);
+
+      const user = await User.findOne({
+        role: "store_owner",
+        storeCode: prefix,
       });
 
-      if (store) {
-        storeCode = store.storeCode.toUpperCase().trim();
-        console.log("🏪 Store resolved:", storeCode);
+      if (user) {
+        storeCode = user.storeCode.toUpperCase().trim();
+        storeOwner = user._id;
+        console.log("🏪 User resolved:", user.email, "=>", storeCode);
       }
     }
 
-    /* ---------------- FALLBACK (IMPORTANT) ---------------- */
+    /* ---------------- FALLBACK ---------------- */
 
-    // 🚑 Prevent silent UI failure
     const finalStoreCode = storeCode || "UNASSIGNED";
 
     if (!storeCode) {
@@ -79,6 +84,7 @@ router.post("/order-create", async (req, res) => {
       discountAmount: Number(order.total_discounts || 0),
       totalPrice: Number(order.total_price),
       storeCode: finalStoreCode,
+      storeOwner: storeOwner, // ✅ link to user (can be null)
       source: "shopify",
       orderCreatedAt: new Date(order.created_at),
     });
