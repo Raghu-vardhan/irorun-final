@@ -1,7 +1,6 @@
 import express from "express";
 import Order from "../models/Order.model.js";
-import Store from "../models/store.model.js";
-
+import User from "../models/user.model.js"; // ✅ Correct model
 
 const router = express.Router();
 
@@ -9,63 +8,74 @@ router.post("/order-create", async (req, res) => {
   try {
     console.log("🔥 SHOPIFY WEBHOOK HIT");
 
-    // 1️⃣ Get Shopify order payload
-  const order = JSON.parse(req.body.toString("utf8"));
+    const order = JSON.parse(req.body.toString("utf8"));
 
+    /* ---------------- DISCOUNT DETECTION ---------------- */
 
-    // 2️⃣ 🔑 FINAL DISCOUNT DETECTION LOGIC (ADD HERE)
     let discountCode = null;
 
-    // Manual coupon entered at checkout
-    if (order.discount_codes && order.discount_codes.length > 0) {
-      discountCode = order.discount_codes[0].code.toUpperCase();
+    if (order.discount_codes?.length > 0) {
+      discountCode = order.discount_codes[0].code?.toUpperCase().trim();
     }
 
-    // COD / automatic / app discounts
     if (!discountCode && order.discount_applications?.length > 0) {
       discountCode =
-        order.discount_applications[0]?.title?.toUpperCase() || null;
+        order.discount_applications[0]?.title?.toUpperCase().trim() || null;
     }
 
-    console.log("📦 Detected discount:", discountCode);
+    console.log("📦 Detected discountCode:", discountCode);
 
-    // 3️⃣ Find store using mapping collection
+    /* ---------------- EXTRACT STORE CODE ---------------- */
+    // Example: FITNESS15 -> FITNESS
     let storeCode = null;
 
-    console.log("📦 Detected discountCode:", discountCode);
-console.log("🧠 Store model collection:", Store.collection.name);
-
-
     if (discountCode) {
-      const store = await Store.findOne({
-      coupons: { $in: [discountCode] },
-    });
-
-
-      if (store) {
-        console.log("🏪 Store lookup result:", store);
-        storeCode = store.storeCode;
-        
+      // take letters from start until number
+      const match = discountCode.match(/^[A-Z]+/);
+      if (match) {
+        storeCode = match[0];
       }
     }
 
-    if (!storeCode) {
-      console.log("❌ Store not identified for discount:", discountCode);
-      return res.status(200).json({
-        success: true,
-        message: "Order received but store not identified",
-      });
+    console.log("🏷️ Extracted storeCode:", storeCode);
+
+    /* ---------------- USER LOOKUP ---------------- */
+
+    let finalStoreCode = "UNASSIGNED";
+
+    if (storeCode) {
+      const user = await User.findOne({ storeCode });
+
+      if (user) {
+        finalStoreCode = user.storeCode;
+        console.log("👤 Store owner found for:", finalStoreCode);
+      } else {
+        console.log("❌ No user found with storeCode:", storeCode);
+      }
     }
 
-    // 4️⃣ Save order
+    /* ---------------- IDEMPOTENCY CHECK ---------------- */
+
+    const existingOrder = await Order.findOne({
+      shopifyOrderId: order.id.toString(),
+    });
+
+    if (existingOrder) {
+      console.log("🔁 Duplicate webhook ignored:", order.id);
+      return res.status(200).json({ success: true });
+    }
+
+    /* ---------------- SAVE ORDER ---------------- */
+
     const savedOrder = await Order.create({
       shopifyOrderId: order.id.toString(),
       customerName: `${order.customer?.first_name || ""} ${order.customer?.last_name || ""}`.trim(),
-      discountCode: discountCode,
+      discountCode,
       discountAmount: Number(order.total_discounts || 0),
       totalPrice: Number(order.total_price),
-      storeCode: storeCode,
+      storeCode: finalStoreCode,
       source: "shopify",
+      orderCreatedAt: new Date(order.created_at),
     });
 
     console.log("✅ Shopify order saved:", savedOrder.shopifyOrderId);
